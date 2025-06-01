@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fusion Target Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+      margin-top: 10px;
+      width: 100%;
+    }
+    .result {
+      margin-top: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Fusion Target Finder</h2>
+  <p>Enter the number of cards on the field:</p>
+  <input type="number" id="boardState" min="3" placeholder="e.g. 11">
+  <button onclick="calculateSolutions()">Find Targets</button>
+
+  <div class="result" id="results"></div>
+
+  <script>
+    function calculateSolutions() {
+      const z = parseInt(document.getElementById('boardState').value);
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      if (isNaN(z) || z < 3) {
+        resultsDiv.innerHTML = '<p style="color: red;">Please enter a number ≥ 3.</p>';
+        return;
+      }
+
+      let solutions = [];
+
+      for (let x = 1; 2 * x < z; x++) {
+        let y = z - 2 * x;
+        if (y > 0) {
+          solutions.push([x, y]);
+        }
+      }
+
+      // Sort by x + y
+      solutions.sort((a, b) => (a[0] + a[1]) - (b[0] + b[1]));
+
+      const ul = document.createElement('ul');
+      let count = 0;
+
+      for (let [xyz, fusion] of solutions) {
+        if (xyz + fusion < 13) {
+          const li = document.createElement('li');
+          li.textContent = `Possible Targets: level ${xyz + fusion} with 2 level ${xyz} XYZ monsters and a level ${fusion} Fusion monster`;
+          ul.appendChild(li);
+          count++;
+        }
+      }
+
+      if (count === 0) {
+        resultsDiv.innerHTML = '<p>No valid targets found.</p>';
+      } else {
+        resultsDiv.appendChild(ul);
+      }
+    }
+  </script>
+</body>
+</html>

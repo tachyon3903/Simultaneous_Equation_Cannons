@@ -33,47 +33,64 @@
 
   <div class="result" id="results"></div>
 
-  <script>
-    function calculateSolutions() {
-      const z = parseInt(document.getElementById('boardState').value);
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = '';
+<script>
+  function calculateSolutions() {
+    const z = parseInt(document.getElementById('boardState').value);
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
 
-      if (isNaN(z) || z < 3) {
-        resultsDiv.innerHTML = '<p style="color: red;">Please enter a number ≥ 3.</p>';
-        return;
-      }
+    if (isNaN(z) || z < 3) {
+      resultsDiv.innerHTML = '<p style="color: red;">Please enter a number ≥ 3.</p>';
+      return;
+    }
 
-      let solutions = [];
+    let solutions = [];
 
-      for (let x = 1; 2 * x < z; x++) {
-        let y = z - 2 * x;
-        if (y > 0) {
-          solutions.push([x, y]);
-        }
-      }
-
-      // Sort by x + y
-      solutions.sort((a, b) => (a[0] + a[1]) - (b[0] + b[1]));
-
-      const ul = document.createElement('ul');
-      let count = 0;
-
-      for (let [xyz, fusion] of solutions) {
-        if (xyz + fusion < 13) {
-          const li = document.createElement('li');
-          li.textContent = `Targets: level ${xyz + fusion} with 2 level ${xyz} XYZ monsters and a level ${fusion} Fusion monster`;
-          ul.appendChild(li);
-          count++;
-        }
-      }
-
-      if (count === 0) {
-        resultsDiv.innerHTML = '<p>No valid targets found.</p>';
-      } else {
-        resultsDiv.appendChild(ul);
+    for (let x = 1; 2 * x < z; x++) {
+      let y = z - 2 * x;
+      if (y > 0) {
+        solutions.push([x, y]);
       }
     }
-  </script>
+
+    solutions.sort((a, b) => (a[0] + a[1]) - (b[0] + b[1]));
+
+    let tableHTML = `
+      <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin-top: 20px;">
+        <thead>
+          <tr>
+            <th>Target Level</th>
+            <th>XYZ Level</th>
+            <th>Fusion Level</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    let count = 0;
+
+    for (let [xyz, fusion] of solutions) {
+      const targetLevel = xyz + fusion;
+      if (targetLevel < 13) {
+        tableHTML += `
+          <tr>
+            <td>${targetLevel}</td>
+            <td>2 x Level ${xyz}</td>
+            <td>Level ${fusion}</td>
+          </tr>
+        `;
+        count++;
+      }
+    }
+
+    tableHTML += "</tbody></table>";
+
+    if (count === 0) {
+      resultsDiv.innerHTML = '<p>No valid targets found.</p>';
+    } else {
+      resultsDiv.innerHTML = tableHTML;
+    }
+  }
+</script>S
 </body>
 </html>
